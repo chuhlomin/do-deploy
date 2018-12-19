@@ -28,6 +28,7 @@ chmod 600 /key
 
 ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "docker pull ${PLUGIN_DOCKER_IMAGE} && \
     docker stop ${PLUGIN_CONTAINER_NAME} && \
+    docker rm ${PLUGIN_CONTAINER_NAME} && \
     docker run --rm -d --name ${PLUGIN_CONTAINER_NAME} \
         $ENVS $SECRET_ENVS \
         $VOLUMES \
