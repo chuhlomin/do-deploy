@@ -1,5 +1,7 @@
 #/bin/sh
 
+set -e
+
 ENVS=""
 for env in $(echo $PLUGIN_ENVS | jq '. | to_entries[] | "\(.key)=\"\(.value)\""')
 do
