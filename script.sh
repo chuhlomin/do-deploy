@@ -15,6 +15,7 @@ do
 done
 
 echo ${SSH_KEY} > /key.pem
+chmod 600 /key.pem
 
 ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key.pem "docker pull ${DOCKER_IMAGE}; \
     docker stop ${PLUGIN_CONTAINER_NAME}; \
