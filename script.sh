@@ -13,7 +13,8 @@ for env in $(printenv | grep "SECRET_")
 do
     if [[ ${env:0:7} == "SECRET_" ]] # len("SECRET_") = 7
     then
-        SECRET_ENVS="${SECRET_ENVS} --env ${env:7}"
+        pair=${env:7}
+        SECRET_ENVS="${SECRET_ENVS} --env ${pair%%=*:7}=\"${pair#*=}\""
     fi
 done
 
