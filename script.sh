@@ -11,9 +11,9 @@ done
 SECRET_ENVS=""
 for env in $(printenv | grep "SECRET_")
 do
+    echo ${env:0:8}
     if [[ $env == SECRET_* ]]
     then
-        echo ${env:0:8}
         SECRET_ENVS="${SECRET_ENVS} --env ${env:7}" # len("SECRET_") = 7
     fi
 done
