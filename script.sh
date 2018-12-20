@@ -18,12 +18,17 @@ do
     fi
 done
 
+echo $PLUGIN_MOUNTS
+echo "---"
 VOLUMES=""
 for mount in $(echo ${PLUGIN_MOUNTS} | tr "," "\n")
 do
+    echo $mount
     VOLUMES="${VOLUMES} --volume ${mount}"
 done
+echo "---"
 echo $VOLUMES
+echo "---"
 
 echo "${SSH_KEY}" > /key
 chmod 600 /key
