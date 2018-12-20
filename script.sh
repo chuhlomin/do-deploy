@@ -23,6 +23,7 @@ for mount in $(echo ${PLUGIN_MOUNTS} | tr "," "\n")
 do
     VOLUMES="${VOLUMES} --volume ${mount}"
 done
+echo $VOLUMES
 
 echo "${SSH_KEY}" > /key
 chmod 600 /key
@@ -31,9 +32,8 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "d
     docker stop ${PLUGIN_CONTAINER_NAME} && \
     docker wait ${PLUGIN_CONTAINER_NAME} && \
     docker run -d --name ${PLUGIN_CONTAINER_NAME} \
-        $ENVS $SECRET_ENVS \
-        $VOLUMES \
+        $ENVS $SECRET_ENVS $VOLUMES \
         --expose ${PLUGIN_EXPOSE} \
         --network ${PLUGIN_DOCKER_NETWORK} \
-        --network-alias=${PLUGIN_DOCKER_NETWORK_ALIAS} \
+        --network-alias ${PLUGIN_DOCKER_NETWORK_ALIAS} \
         ${PLUGIN_DOCKER_IMAGE}"
