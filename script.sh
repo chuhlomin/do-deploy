@@ -18,22 +18,18 @@ do
     fi
 done
 
-echo $PLUGIN_MOUNTS
-echo "---"
 VOLUMES=""
 for mount in $(echo ${PLUGIN_MOUNTS} | tr "," "\n")
 do
-    echo $mount
     VOLUMES="${VOLUMES} --volume ${mount}"
 done
-echo "---"
-echo $VOLUMES
-echo "---"
 
 echo "${SSH_KEY}" > /key
 chmod 600 /key
 
-ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "docker pull ${PLUGIN_DOCKER_IMAGE} && \
+set -x
+
+ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "tmux attach -t ci && docker pull ${PLUGIN_DOCKER_IMAGE} && \
     docker stop ${PLUGIN_CONTAINER_NAME} && \
     docker wait ${PLUGIN_CONTAINER_NAME} && \
     docker run -d --name ${PLUGIN_CONTAINER_NAME} \
