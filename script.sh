@@ -35,5 +35,5 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "d
         --expose ${PLUGIN_EXPOSE} \
         --network ${PLUGIN_DOCKER_NETWORK} \
         --network-alias ${PLUGIN_DOCKER_NETWORK_ALIAS} \
-        --log-driver ${PLUGIN_LOG_DRIVER}
+        --log-driver ${PLUGIN_LOG_DRIVER} \
         ${PLUGIN_DOCKER_IMAGE}"
