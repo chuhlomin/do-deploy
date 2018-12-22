@@ -24,6 +24,8 @@ do
     VOLUMES="${VOLUMES} --volume ${mount}"
 done
 
+if [ -z "$PLUGIN_EXPOSE" ]; then EXPOSE=""; else EXPOSE="--expose ${PLUGIN_EXPOSE}"; fi
+
 echo "${SSH_KEY}" > /key
 chmod 600 /key
 
@@ -31,8 +33,7 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "d
     docker stop ${PLUGIN_CONTAINER_NAME} && \
     docker wait ${PLUGIN_CONTAINER_NAME} && \
     docker run --rm --detach --name ${PLUGIN_CONTAINER_NAME} \
-        $ENVS $SECRET_ENVS $VOLUMES \
-        --expose ${PLUGIN_EXPOSE} \
+        $EXPOSE $ENVS $SECRET_ENVS $VOLUMES \
         --network ${PLUGIN_DOCKER_NETWORK} \
         --network-alias ${PLUGIN_DOCKER_NETWORK_ALIAS} \
         --log-driver ${PLUGIN_LOG_DRIVER} \
