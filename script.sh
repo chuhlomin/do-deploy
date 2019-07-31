@@ -24,14 +24,17 @@ do
     VOLUMES="${VOLUMES} --volume ${mount}"
 done
 
+LOG_DRIVER=""
+if [ ! -z $PLUGIN_LOG_DRIVER ];
+then
+    LOG_DRIVER="--log-driver ${PLUGIN_LOG_DRIVER}"
+fi
+
 LOG_OPT=""
 for opt in $(echo ${PLUGIN_LOG_OPT} | jq -r '. | to_entries[] | "\(.key)=\"\(.value)\""')
 do
     LOG_OPT="${LOG_OPT} --log-opt ${opt}"
 done
-
-echo $PLUGIN_LOG_OPT
-echo $LOG_OPT
 
 if [ -z "$PLUGIN_EXPOSE" ]; then EXPOSE=""; else EXPOSE="--expose ${PLUGIN_EXPOSE}"; fi
 if [ -z "$PLUGIN_RESTART" ]; then RESTART=""; else RESTART="--restart ${RESTART}"; fi
@@ -41,7 +44,19 @@ chmod 600 /key
 
 if [ -z $PLUGIN_CONTAINER_NAME ] && [ ! -z $PLUGIN_DOCKER_NETWORK ];
 then
-    PLUGIN_CONTAINER_NAME=$PLUGIN_DOCKER_NETWORK_ALIAS
+    PLUGIN_CONTAINER_NAME="$PLUGIN_DOCKER_NETWORK_ALIAS"
+fi
+
+NETWORK_ALIAS=""
+if [ ! -z $PLUGIN_DOCKER_NETWORK_ALIAS ];
+then
+    NETWORK_ALIAS="--network-alias ${PLUGIN_DOCKER_NETWORK_ALIAS}"
+fi
+
+NETWORK=""
+if [ ! -z $PLUGIN_DOCKER_NETWORK ];
+then
+    NETWORK="--network ${PLUGIN_DOCKER_NETWORK}"
 fi
 
 ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "docker pull ${PLUGIN_DOCKER_IMAGE} && \
@@ -50,8 +65,6 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "d
     docker rm $PLUGIN_CONTAINER_NAME || true && \
     docker run --rm --detach --name $PLUGIN_CONTAINER_NAME \
         $RESTART $EXPOSE $ENVS $SECRET_ENVS $VOLUMES \
-        --network $PLUGIN_DOCKER_NETWORK \
-        --network-alias $PLUGIN_DOCKER_NETWORK_ALIAS \
-        --log-driver $PLUGIN_LOG_DRIVER \
-        $LOG_OPT \
+        $NETWORK $NETWORK_ALIAS \
+        $LOG_DRIVER $LOG_OPT \
         $PLUGIN_DOCKER_IMAGE"
