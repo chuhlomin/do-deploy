@@ -59,11 +59,19 @@ then
     NETWORK="--network ${PLUGIN_DOCKER_NETWORK}"
 fi
 
-ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "docker pull ${PLUGIN_DOCKER_IMAGE} && \
-    docker stop $PLUGIN_CONTAINER_NAME || true && \
-    docker wait $PLUGIN_CONTAINER_NAME || true && \
-    docker rm $PLUGIN_CONTAINER_NAME || true && \
-    docker run --rm --detach --name $PLUGIN_CONTAINER_NAME \
+echo $PLUGIN_SUDO
+
+SUDO=""
+if [ ! -z $PLUGIN_SUDO ];
+then
+    SUDO="sudo"
+fi
+
+ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "${SUDO} docker pull ${PLUGIN_DOCKER_IMAGE} && \
+    ${SUDO} docker stop $PLUGIN_CONTAINER_NAME || true && \
+    ${SUDO} docker wait $PLUGIN_CONTAINER_NAME || true && \
+    ${SUDO} docker rm $PLUGIN_CONTAINER_NAME || true && \
+    ${SUDO} docker run --rm --detach --name $PLUGIN_CONTAINER_NAME \
         $RESTART $EXPOSE $ENVS $SECRET_ENVS $VOLUMES \
         $NETWORK $NETWORK_ALIAS \
         $LOG_DRIVER $LOG_OPT \
