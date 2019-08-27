@@ -59,10 +59,8 @@ then
     NETWORK="--network ${PLUGIN_DOCKER_NETWORK}"
 fi
 
-echo $PLUGIN_SUDO
-
 SUDO=""
-if [ ! -z $PLUGIN_SUDO ];
+if [ "$PLUGIN_SUDO" -eq "true" ]; then
 then
     SUDO="sudo"
 fi
