@@ -60,7 +60,7 @@ then
 fi
 
 SUDO=""
-if [[ "$PLUGIN_SUDO" -eq "true" ]];
+if [[ "$PLUGIN_SUDO" == "true" ]];
 then
     SUDO="sudo"
 fi
