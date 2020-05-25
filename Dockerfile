@@ -6,4 +6,4 @@ RUN apk --update add jq && \
 
 COPY entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT /entrypoint.sh
