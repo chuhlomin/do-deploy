@@ -4,7 +4,7 @@ Drone plugin that SSH into server (using SSH key) and runs a docker image.
 
 ## Usage
 
-```
+```bash
 docker run --rm \
   -e PLUGIN_USERNAME=username \
   -e PLUGIN_SERVER=server.com \
@@ -20,4 +20,26 @@ docker run --rm \
   -e SECRET_ONE=one \
   -e SECRET_TWO=two \
   cr.chuhlomin.com/docker-run
+```
+
+Or in `.drone.yml`:
+
+```bash
+  - name: deploy
+    image: cr.chuhlomin.com/docker-run:latest
+    settings:
+      server: server.com
+      username: username
+      sudo: true
+      docker_image: redis:latest
+      docker_network: docker_network
+      docker_network_alias: network_alias
+      expose: "80"
+      envs:
+        PORT: "80"
+    environment:
+      SECRET_DB_PASSWORD:
+        from_secret: database_password
+      SSH_KEY:
+        from_secret: ssh_key
 ```
