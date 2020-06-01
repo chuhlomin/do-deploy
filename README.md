@@ -1,5 +1,7 @@
 # docker-run
 
+[![Build Status](https://ci.chuhlomin.com/api/badges/chuhlomin/docker-run/status.svg)](https://ci.chuhlomin.com/chuhlomin/docker-run)
+
 Drone plugin that SSH into server (using SSH key) and runs a docker image.
 
 ## Usage
