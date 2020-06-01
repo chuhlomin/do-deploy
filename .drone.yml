@@ -3,22 +3,43 @@ kind: pipeline
 type: docker
 name: default
 
+platform:
+  os: linux
+  arch: amd64
+
 steps:
-- name: cr
-  image: plugins/docker
-  settings:
-    registry: cr.chuhlomin.com
-    repo: cr.chuhlomin.com/docker-run
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
-    tags:
-      - latest
-  when:
-    event: push
-    branch: master
+  - name: cr
+    image: plugins/docker
+    settings:
+      registry: cr.chuhlomin.com
+      repo: cr.chuhlomin.com/docker-run
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      tags:
+        - latest
+    when:
+      event:
+        - push
+      branch:
+        - master
+
+  - name: cr
+    image: plugins/docker
+    settings:
+      registry: cr.chuhlomin.com
+      repo: cr.chuhlomin.com/docker-run
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      tags:
+        - ${DRONE_TAG}
+    when:
+      event:
+        - tag
 
 trigger:
-  branch:
-  - master
+  event:
+    - push
