@@ -65,6 +65,12 @@ then
     SUDO="sudo"
 fi
 
+LABELS=""
+for label in $(echo ${PLUGIN_LABELS} | jq -r '. | to_entries[] | "\(.key)=\"\(.value)\""')
+do
+    LABELS="${LABELS} --label ${label}"
+done
+
 ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "${SUDO} docker pull ${PLUGIN_DOCKER_IMAGE} && \
     ${SUDO} docker stop $PLUGIN_CONTAINER_NAME || true && \
     ${SUDO} docker wait $PLUGIN_CONTAINER_NAME || true && \
@@ -73,4 +79,5 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "$
         $RESTART $EXPOSE $ENVS $SECRET_ENVS $VOLUMES \
         $NETWORK $NETWORK_ALIAS \
         $LOG_DRIVER $LOG_OPT \
+        $LABELS \
         $PLUGIN_DOCKER_IMAGE"
