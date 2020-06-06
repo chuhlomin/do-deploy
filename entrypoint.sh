@@ -2,6 +2,11 @@
 
 set -e
 
+if [[ "$PLUGIN_DEBUG" == "true" ]];
+then
+    set -x
+fi
+
 ENVS=""
 for env in $(echo ${PLUGIN_ENVS} | jq -r '. | to_entries[] | "\(.key)=\"\(.value)\""')
 do
@@ -76,6 +81,13 @@ for label in $(echo ${PLUGIN_LABELS} | jq -r '. | to_entries[] | "\(.key)=\"\(.v
 do
     LABELS="${LABELS} --label ${label}"
 done
+
+set +x
+
+if [[ "$PLUGIN_DEBUG" == "true" ]];
+then
+    echo "docker run --detach --name $PLUGIN_CONTAINER_NAME $RM $RESTART $EXPOSE $ENVS $SECRET_ENVS $VOLUMES $NETWORK $NETWORK_ALIAS $LOG_DRIVER $LOG_OPT $LABELS $PLUGIN_DOCKER_IMAGE $PLUGIN_COMMAND"
+fi
 
 ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "${SUDO} docker pull ${PLUGIN_DOCKER_IMAGE} && \
     ${SUDO} docker stop $PLUGIN_CONTAINER_NAME || true && \
