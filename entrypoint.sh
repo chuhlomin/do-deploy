@@ -39,6 +39,12 @@ done
 if [ -z "$PLUGIN_EXPOSE" ]; then EXPOSE=""; else EXPOSE="--expose ${PLUGIN_EXPOSE}"; fi
 if [ -z "$PLUGIN_RESTART" ]; then RESTART=""; else RESTART="--restart ${RESTART}"; fi
 
+RM="--rm"
+if [[ ! -z $RESTART]];
+then
+    RM="" # otherwise getting error: Conflicting options: --restart and --rm.
+done
+
 echo "${SSH_KEY}" > /key
 chmod 600 /key
 
@@ -75,7 +81,7 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "$
     ${SUDO} docker stop $PLUGIN_CONTAINER_NAME || true && \
     ${SUDO} docker wait $PLUGIN_CONTAINER_NAME || true && \
     ${SUDO} docker rm $PLUGIN_CONTAINER_NAME || true && \
-    ${SUDO} docker run --rm --detach --name $PLUGIN_CONTAINER_NAME \
+    ${SUDO} docker run $RM --detach --name $PLUGIN_CONTAINER_NAME \
         $RESTART $EXPOSE $ENVS $SECRET_ENVS $VOLUMES \
         $NETWORK $NETWORK_ALIAS \
         $LOG_DRIVER $LOG_OPT \
