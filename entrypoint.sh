@@ -40,7 +40,7 @@ if [ -z "$PLUGIN_EXPOSE" ]; then EXPOSE=""; else EXPOSE="--expose ${PLUGIN_EXPOS
 if [ -z "$PLUGIN_RESTART" ]; then RESTART=""; else RESTART="--restart ${RESTART}"; fi
 
 RM="--rm"
-if [[ ! -z "$RESTART" ]];
+if [ ! -z "$RESTART" ];
 then
     RM="" # otherwise getting error: Conflicting options: --restart and --rm.
 fi
