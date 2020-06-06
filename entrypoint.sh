@@ -80,4 +80,4 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "$
         $NETWORK $NETWORK_ALIAS \
         $LOG_DRIVER $LOG_OPT \
         $LABELS \
-        $PLUGIN_DOCKER_IMAGE"
+        $PLUGIN_DOCKER_IMAGE $PLUGIN_COMMAND"
