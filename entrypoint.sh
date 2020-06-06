@@ -43,7 +43,7 @@ RM="--rm"
 if [[ ! -z $RESTART]];
 then
     RM="" # otherwise getting error: Conflicting options: --restart and --rm.
-done
+fi
 
 echo "${SSH_KEY}" > /key
 chmod 600 /key
