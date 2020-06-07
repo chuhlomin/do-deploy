@@ -2,11 +2,6 @@
 
 set -e
 
-if [[ "$PLUGIN_DEBUG" == "true" ]];
-then
-    set -x
-fi
-
 ENVS=""
 for env in $(echo ${PLUGIN_ENVS} | jq -r '. | to_entries[] | "\(.key)=\"\(.value)\""')
 do
@@ -42,7 +37,7 @@ do
 done
 
 if [ -z "$PLUGIN_EXPOSE" ]; then EXPOSE=""; else EXPOSE="--expose ${PLUGIN_EXPOSE}"; fi
-if [ -z "$PLUGIN_RESTART" ]; then RESTART=""; else RESTART="--restart ${RESTART}"; fi
+if [ -z "$PLUGIN_RESTART" ]; then RESTART=""; else RESTART="--restart ${PLUGIN_RESTART}"; fi
 
 RM="--rm"
 if [ ! -z "$RESTART" ];
@@ -82,11 +77,9 @@ do
     LABELS="${LABELS} --label ${label}"
 done
 
-set +x
-
 if [[ "$PLUGIN_DEBUG" == "true" ]];
 then
-    echo "docker run --detach --name $PLUGIN_CONTAINER_NAME $RM $RESTART $EXPOSE $ENVS $SECRET_ENVS $VOLUMES $NETWORK $NETWORK_ALIAS $LOG_DRIVER $LOG_OPT $LABELS $PLUGIN_DOCKER_IMAGE $PLUGIN_COMMAND"
+    echo "docker run --detach --name $PLUGIN_CONTAINER_NAME $RM $RESTART $EXPOSE $ENVS *SECRETS* $VOLUMES $NETWORK $NETWORK_ALIAS $LOG_DRIVER $LOG_OPT $LABELS $PLUGIN_DOCKER_IMAGE $PLUGIN_COMMAND"
 fi
 
 ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "${SUDO} docker pull ${PLUGIN_DOCKER_IMAGE} && \
