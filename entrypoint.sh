@@ -8,6 +8,7 @@ do
     ENVS="${ENVS} --env ${env}"
 done
 
+SECRETS_MASK=""
 SECRET_ENVS=""
 for env in $(printenv | grep "SECRET_")
 do
@@ -15,6 +16,7 @@ do
     then
         pair=${env:7}
         SECRET_ENVS="${SECRET_ENVS} --env ${pair%%=*}=\"${pair#*=}\""
+        SECRETS_MASK="${SECRET_ENVS} --env ${pair%%=*}=\"*REDUCTED*\""
     fi
 done
 
@@ -38,6 +40,12 @@ done
 
 if [ -z "$PLUGIN_EXPOSE" ]; then EXPOSE=""; else EXPOSE="--expose ${PLUGIN_EXPOSE}"; fi
 if [ -z "$PLUGIN_RESTART" ]; then RESTART=""; else RESTART="--restart ${PLUGIN_RESTART}"; fi
+
+PORTS=""
+for p in $(echo ${PLUGIN_PORTS} | tr "," "\n")
+do
+    PORTS="${PORTS} -p ${p}"
+done
 
 RM="--rm"
 if [ ! -z "$RESTART" ];
@@ -79,7 +87,12 @@ done
 
 if [[ "$PLUGIN_DEBUG" == "true" ]];
 then
-    echo "docker run --detach --name $PLUGIN_CONTAINER_NAME $RM $RESTART $EXPOSE $ENVS *SECRETS* $VOLUMES $NETWORK $NETWORK_ALIAS $LOG_DRIVER $LOG_OPT $LABELS $PLUGIN_DOCKER_IMAGE $PLUGIN_COMMAND"
+    echo "docker run --detach --name $PLUGIN_CONTAINER_NAME \
+        $RM $RESTART $EXPOSE $PORTS $ENVS $SECRETS_MASK $VOLUMES \
+        $NETWORK $NETWORK_ALIAS \
+        $LOG_DRIVER $LOG_OPT \
+        $LABELS \
+        $PLUGIN_DOCKER_IMAGE $PLUGIN_COMMAND"
 fi
 
 ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "${SUDO} docker pull ${PLUGIN_DOCKER_IMAGE} && \
@@ -87,7 +100,7 @@ ssh -o "StrictHostKeyChecking=no" ${PLUGIN_USERNAME}@${PLUGIN_SERVER} -i /key "$
     ${SUDO} docker wait $PLUGIN_CONTAINER_NAME || true && \
     ${SUDO} docker rm $PLUGIN_CONTAINER_NAME || true && \
     ${SUDO} docker run --detach --name $PLUGIN_CONTAINER_NAME \
-        $RM $RESTART $EXPOSE $ENVS $SECRET_ENVS $VOLUMES \
+        $RM $RESTART $EXPOSE $PORTS $ENVS $SECRET_ENVS $VOLUMES \
         $NETWORK $NETWORK_ALIAS \
         $LOG_DRIVER $LOG_OPT \
         $LABELS \
