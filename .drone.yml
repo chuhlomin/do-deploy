@@ -35,7 +35,7 @@ steps:
       password:
         from_secret: docker_password
       tags:
-        - ${DRONE_TAG}
+        - "${DRONE_TAG}"
     when:
       event:
         - tag
