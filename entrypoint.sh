@@ -79,10 +79,18 @@ then
     SUDO="sudo"
 fi
 
+if [[ "$PLUGIN_DEBUG" == "true" ]];
+    echo "Labels from plugin: ${PLUGIN_LABELS}"
+fi
+
 LABELS=""
 for label in $(echo ${PLUGIN_LABELS} | jq -r '. | to_entries[] | "\(.key)=\"\(.value)\""')
 do
     LABELS="${LABELS} --label ${label}"
+
+    if [[ "$PLUGIN_DEBUG" == "true" ]];
+        echo "Lables: $LABELS"
+    fi
 done
 
 if [[ "$PLUGIN_DEBUG" == "true" ]];
