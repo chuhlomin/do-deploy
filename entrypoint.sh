@@ -80,6 +80,7 @@ then
 fi
 
 if [[ "$PLUGIN_DEBUG" == "true" ]];
+then
     echo "Labels from plugin: ${PLUGIN_LABELS}"
 fi
 
@@ -89,6 +90,7 @@ do
     LABELS="${LABELS} --label ${label}"
 
     if [[ "$PLUGIN_DEBUG" == "true" ]];
+    then
         echo "Lables: $LABELS"
     fi
 done
