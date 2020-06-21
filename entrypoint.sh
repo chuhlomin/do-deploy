@@ -85,7 +85,8 @@ then
 fi
 
 LABELS=""
-for label in $(echo ${PLUGIN_LABELS} | jq -r '. | to_entries[] | "\(.key)=\"\(.value)\""')
+IFS=$'\n'
+for label in $(echo ${PLUGIN_LABELS} | jq -r '. | to_entries[] | "\(.key)=\"\(.value)\"\n"')
 do
     LABELS="${LABELS} --label ${label}"
 
